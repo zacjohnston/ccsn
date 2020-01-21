@@ -5,13 +5,16 @@ import matplotlib.pyplot as plt
 
 prog_path = '/Users/zac/projects/data/progenitors/sukhbold_2018/mdotone'
 
-def load_prog(mass, path=None):
+def load_prog(mass, path=None, skiprows=3):
     """Load progenitor model
 
     mass : flt
     path : str
+    skiprows : int
     """
     filepath = prog_filepath(mass, path=path)
+    prog = pd.read_csv(filepath, skiprows=skiprows, delim_whitespace=True)
+    return prog
 
 
 def prog_filename(mass):
