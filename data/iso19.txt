@@ -1,5 +1,5 @@
 isotope Z A
-n 0 1
+neutrons 0 1
 h1 1 1
 he3 2 3
 he4 2 4
