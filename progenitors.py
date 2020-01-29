@@ -96,21 +96,24 @@ def plot_x(prog, net, cr56=None, vline=None):
 # ================================================================
 #       Abundance Mapping
 # ================================================================
-# def map_abu(prog, net_0):
-#     """
-#     net_0 : table of isotopes *not* being mapped
-#     """
-#     abu = {}
-#
-#     abu['']
-#
-#     abu['fe56'] = prog['Fe56']
-#
-#     abu['cr56'] = 7 * (1 - sumx_0) - 14 * (prog['Ye'] - ye_0) - 0.5 * abu['fe56']
-#
-#     abu['ni56'] = 1 - sumx_0 - abu['fe56'] - abu['cr56']
-#
-#     return abu
+def map_abu(prog, net_0):
+    """
+    net_0 : table of isotopes *not* being mapped
+    """
+    abu = {}
+
+    sums_0 = get_sums(prog, net=net_0)
+
+    abu['fe56'] = prog['Fe56']
+
+    abu['cr56'] = 7 * (1 - sums_0['sumx']) - 14 * (prog['Ye'] - sums_0['ye']) - 0.5 * abu['fe56']
+
+    abu['ni56'] = 1 - sums_0['sumx'] - abu['fe56'] - abu['cr56']
+
+    for key, val in abu.items():
+        abu[key] = np.array(val)
+
+    return abu
 
 
 def get_sums(prog, net):
