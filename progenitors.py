@@ -141,8 +141,9 @@ def plot_mapped(prog, net_0):
         pass
 
 
-def plot_mapped_sumx(prog, net_0, net, mapped_abu=None, ax=None, vline=None, hline=None,
-                     x_var=None, sums_0=None, sums=None):
+def plot_mapped_sumx(prog, net_0, net, mapped_abu=None, ax=None, vline=None,
+                     hline=None, x_var=None, sums_0=None, sums=None, xlims=None,
+                     legend=True):
     x_var = check_xvar(x_var)
     sums_0 = check_sums(sums_0, prog=prog, net=net_0)
     sums = check_sums(sums, prog=prog, net=net)
@@ -161,7 +162,7 @@ def plot_mapped_sumx(prog, net_0, net, mapped_abu=None, ax=None, vline=None, hli
 
     add_vline(ax, vline=vline, plot_type='x')
     add_hline(ax, hline=hline, prog=prog, x_var=x_var)
-    ax.legend()
+    config_ax(ax, legend=legend, xlims=xlims)
 
 
 # ================================================================
@@ -213,8 +214,24 @@ def check_mapped_abu(mapped_abu, prog, net_0, sums_0):
     return mapped_abu
 
 
-def check_ax(ax, xscale='log'):
+def check_ax(ax):
     if ax is None:
         fig, ax = plt.subplots(figsize=[8, 6])
-        ax.set_xscale(xscale)
     return ax
+
+
+def config_ax(ax, xscale='log', xlims=None, ylims=None, legend=True):
+    ax.set_xscale(xscale)
+    
+    xlims = check_xlims(xlims)
+    ax.set_xlim(xlims)
+    ax.set_ylim(ylims)
+
+    if legend:
+        ax.legend()
+
+
+def check_xlims(xlims):
+    if xlims is None:
+        xlims = [2e6, 1e10]
+    return xlims
