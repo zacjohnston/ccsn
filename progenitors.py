@@ -144,9 +144,11 @@ def plot_mapped(prog, net_0):
 
 
 def plot_mapped_sumx(prog, net_0, mapped_abu=None, ax=None, vline=None, hline=None,
-                     x_var=None):
+                     x_var=None, sums_0=None):
+    sums_0 = check_sums(sums_0, prog=prog, net=net_0)
+
     if mapped_abu is None:
-        mapped_abu = map_abu(prog, net_0=net_0)
+        mapped_abu = map_abu(prog, net_0=net_0, sums_0=sums_0)
 
     if ax is None:
         fig, ax = plt.subplots(figsize=[8, 6])
@@ -196,3 +198,9 @@ def check_xvar(x_var):
     if x_var is None:
         x_var = 'radius'
     return x_var
+
+
+def check_sums(sums, prog, net):
+    if sums is None:
+        sums = get_sums(prog=prog, net=net)
+    return sums
