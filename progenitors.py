@@ -163,6 +163,7 @@ def plot_mapped_sumx(prog, net_0, net, mapped_abu=None, ax=None, vline=None,
     add_vline(ax, vline=vline, plot_type='x')
     add_hline(ax, hline=hline, prog=prog, x_var=x_var)
     config_ax(ax, legend=legend, xlims=xlims)
+    return ax
 
 
 def plot_mapped_ye(prog, net_0, net, mapped_abu=None, ax=None, vline=None,
@@ -188,6 +189,7 @@ def plot_mapped_ye(prog, net_0, net, mapped_abu=None, ax=None, vline=None,
     add_vline(ax, vline=vline, plot_type='x')
     add_hline(ax, hline=hline, prog=prog, x_var=x_var)
     config_ax(ax, legend=legend, xlims=xlims, title='Ye')
+    return ax
 
 
 # ================================================================
