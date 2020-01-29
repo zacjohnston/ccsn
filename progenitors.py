@@ -163,7 +163,8 @@ def plot_mapped_sumx(prog, net_0, mapped_abu=None, ax=None, vline=None, hline=No
 # ================================================================
 #       Convenience
 # ================================================================
-def add_calculated(ax, vals, prog, x_var='radius', label='Calculated'):
+def add_calculated(ax, vals, prog, x_var=None, label='Calculated'):
+    x_var = check_xvar(x_var)
     if vals is not None:
         ax.plot(prog[x_var], vals, label=label)
 
