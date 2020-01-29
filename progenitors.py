@@ -101,9 +101,7 @@ def map_abu(prog, net_0, sums_0=None):
     net_0 : table of isotopes *not* being mapped
     """
     abu = {}
-
-    if sums_0 is None:
-        sums_0 = get_sums(prog, net=net_0)
+    sums_0 = check_sums(sums_0, prog=prog, net=net_0)
 
     abu['fe56'] = prog['Fe56']
 
@@ -145,17 +143,16 @@ def plot_mapped(prog, net_0):
 
 def plot_mapped_sumx(prog, net_0, mapped_abu=None, ax=None, vline=None, hline=None,
                      x_var=None, sums_0=None):
+    x_var = check_xvar(x_var)
     sums_0 = check_sums(sums_0, prog=prog, net=net_0)
-
-    if mapped_abu is None:
-        mapped_abu = map_abu(prog, net_0=net_0, sums_0=sums_0)
+    mapped_abu = check_mapped_abu(mapped_abu, prog=prog, net_0=net_0, sums_0=sums_0)
 
     if ax is None:
         fig, ax = plt.subplots(figsize=[8, 6])
         ax.set_xscale('log')
 
     for iso in ['ni56', 'fe56', 'cr56']:
-        ax.plot(prog['radius'], mapped_abu[iso], label=f'{iso} (mapped)')
+        ax.plot(prog[x_var], mapped_abu[iso], label=f'{iso} (mapped)')
 
     add_vline(ax, vline=vline, plot_type='x')
     add_hline(ax, hline=hline, prog=prog, x_var=x_var)
@@ -204,3 +201,9 @@ def check_sums(sums, prog, net):
     if sums is None:
         sums = get_sums(prog=prog, net=net)
     return sums
+
+
+def check_mapped_abu(mapped_abu, prog, net_0, sums_0):
+    if mapped_abu is None:
+        mapped_abu = map_abu(prog=prog, net_0=net_0, sums_0=sums_0)
+    return mapped_abu
