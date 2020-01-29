@@ -165,6 +165,31 @@ def plot_mapped_sumx(prog, net_0, net, mapped_abu=None, ax=None, vline=None,
     config_ax(ax, legend=legend, xlims=xlims)
 
 
+def plot_mapped_ye(prog, net_0, net, mapped_abu=None, ax=None, vline=None,
+                   hline=None, x_var=None, sums_0=None, sums=None, xlims=None,
+                   legend=True):
+    x_var = check_xvar(x_var)
+    sums_0 = check_sums(sums_0, prog=prog, net=net_0)
+    sums = check_sums(sums, prog=prog, net=net)
+    mapped_abu = check_mapped_abu(mapped_abu, prog=prog, net_0=net_0, sums_0=sums_0)
+    ax = check_ax(ax)
+
+    ax.plot(prog[x_var], mapped_abu['ni56'] * 28/56, label=f'ni56 (mapped)')
+    ax.plot(prog[x_var], mapped_abu['fe56'] * 26/56, label=f'fe56 (mapped)')
+    ax.plot(prog[x_var], mapped_abu['cr56'] * 24/56, label=f'cr56 (mapped)')
+
+    ax.plot(prog[x_var], prog['Ye'], ls='--', label='original')
+    ax.plot(prog[x_var], sums_0['ye'], ls='--', label='partial')
+
+    ye_final = sums_0['ye'] + mapped_abu['ni56'] * 28/56 + mapped_abu['fe56'] * 26/56 \
+                 + mapped_abu['cr56'] * 24/56
+    ax.plot(prog[x_var], ye_final, ls='--', label='final')
+
+    add_vline(ax, vline=vline, plot_type='x')
+    add_hline(ax, hline=hline, prog=prog, x_var=x_var)
+    config_ax(ax, legend=legend, xlims=xlims, title='Ye')
+
+
 # ================================================================
 #       Convenience
 # ================================================================
@@ -220,9 +245,9 @@ def check_ax(ax):
     return ax
 
 
-def config_ax(ax, xscale='log', xlims=None, ylims=None, legend=True):
+def config_ax(ax, xscale='log', xlims=None, ylims=None, legend=True, title=None):
     ax.set_xscale(xscale)
-    
+    ax.set_title(title)
     xlims = check_xlims(xlims)
     ax.set_xlim(xlims)
     ax.set_ylim(ylims)
