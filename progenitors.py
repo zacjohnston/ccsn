@@ -96,13 +96,14 @@ def plot_x(prog, net, cr56=None, vline=None):
 # ================================================================
 #       Abundance Mapping
 # ================================================================
-def map_abu(prog, net_0):
+def map_abu(prog, net_0, sums_0=None):
     """
     net_0 : table of isotopes *not* being mapped
     """
     abu = {}
 
-    sums_0 = get_sums(prog, net=net_0)
+    if sums_0 is None:
+        sums_0 = get_sums(prog, net=net_0)
 
     abu['fe56'] = prog['Fe56']
 
