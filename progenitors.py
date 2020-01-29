@@ -135,6 +135,31 @@ def get_sums(prog, net):
     return out
 
 
+def plot_mapped(prog, net_0):
+    fig, ax = plt.subplots(3, 1, figsize=[8, 6])
+
+    for i in range(3):
+        pass
+
+
+def plot_mapped_sumx(prog, net_0, mapped_abu=None, ax=None, vline=None, hline=None,
+                     x_var=None):
+    if mapped_abu is None:
+        mapped_abu = map_abu(prog, net_0=net_0)
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=[8, 6])
+        ax.set_xscale('log')
+
+    for iso in ['ni56', 'fe56', 'cr56']:
+        ax.plot(prog['radius'], mapped_abu[iso], label=f'{iso} (mapped)')
+
+    add_vline(ax, vline=vline, plot_type='x')
+    add_hline(ax, hline=hline, prog=prog, x_var=x_var)
+
+    ax.legend()
+
+
 # ================================================================
 #       Convenience
 # ================================================================
@@ -154,3 +179,18 @@ def add_vline(ax, vline, plot_type):
 
         ax.vlines(vline, ylims[0], ylims[1], ls='--', color='k')
 
+
+def add_hline(ax, hline, prog, x_var=None):
+    x_var = check_xvar(x_var)
+
+    if hline is not None:
+        x = np.array(prog[x_var])
+        xlims = [x[0], x[-1]]
+
+        ax.hlines(hline, xlims[0], xlims[1], ls='--', color='k')
+
+
+def check_xvar(x_var):
+    if x_var is None:
+        x_var = 'radius'
+    return x_var
