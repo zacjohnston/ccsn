@@ -15,6 +15,7 @@ def load_prog(mass, path=None, skiprows=3):
     """
     filepath = prog_filepath(mass, path=path)
     prog = pd.read_csv(filepath, skiprows=skiprows, delim_whitespace=True)
+    prog.rename(columns={'neutrons': 'Neutrons'}, inplace=True)  # consistent capitalise
     return prog
 
 
@@ -44,11 +45,11 @@ def prog_filepath(mass, path=None):
 # ===================================================
 #           Plotting
 # ===================================================
-def plot_ye(prog, ye, vline=None):
+def plot_ye(prog, ye=None, vline=None):
     fig, ax = plt.subplots(figsize=[8, 6])
 
     ax.plot(prog['radius'], prog['Ye'], label='Provided')
-    ax.plot(prog['radius'], ye, label='Calculated')
+    add_calculated(ax=ax, vals=ye, prog=prog)
     add_vline(ax, vline=vline, plot_type='ye')
 
     ax.set_xscale('log')
@@ -59,11 +60,11 @@ def plot_ye(prog, ye, vline=None):
     return fig, ax
 
 
-def plot_abar(prog, abar, vline=None):
+def plot_abar(prog, abar=None, vline=None):
     fig, ax = plt.subplots(figsize=[8, 6])
 
     ax.plot(prog['radius'], prog['Abar'], label='Provided')
-    ax.plot(prog['radius'], abar, label='Calculated')
+    add_calculated(ax=ax, vals=abar, prog=prog)
     add_vline(ax, vline=vline, plot_type='abar')
 
     ax.set_xscale('log')
@@ -79,13 +80,9 @@ def plot_x(prog, net, cr56=None, vline=None):
 
     for row in net.itertuples():
         iso = row.isotope.capitalize()
-        if iso == 'N':
-            iso = 'neutrons'
-        ax.plot(prog['radius']/1e5, prog[iso], label=iso)
+        ax.plot(prog['radius'], prog[iso], label=iso)
 
-    if cr56 is not None:
-        ax.plot(prog['radius']/1e5, cr56, label='cr56')
-
+    add_calculated(ax=ax, vals=cr56, prog=prog, label='cr56')
     add_vline(ax, vline=vline, plot_type='x')
 
     ax.set_xscale('log')
@@ -94,6 +91,53 @@ def plot_x(prog, net, cr56=None, vline=None):
     ax.legend()
 
     return fig, ax
+
+
+# ================================================================
+#       Abundance Mapping
+# ================================================================
+# def map_abu(prog, net_0):
+#     """
+#     net_0 : table of isotopes *not* being mapped
+#     """
+#     abu = {}
+#
+#     abu['']
+#
+#     abu['fe56'] = prog['Fe56']
+#
+#     abu['cr56'] = 7 * (1 - sumx_0) - 14 * (prog['Ye'] - ye_0) - 0.5 * abu['fe56']
+#
+#     abu['ni56'] = 1 - sumx_0 - abu['fe56'] - abu['cr56']
+#
+#     return abu
+
+
+def get_sums(prog, net):
+    """net : table of isotopes to sum over
+    """
+    out = {}
+    n_zones = len(prog)
+    for key in ['sumx', 'ye', 'sumy']:
+        out[key] = np.zeros(n_zones)
+
+    for row in net.itertuples():
+        iso = row.isotope.capitalize()
+        x_i = np.array(prog[iso])
+
+        out['sumx'] += x_i
+        out['ye'] += x_i * (row.Z / row.A)
+        out['sumy'] += x_i / row.A
+
+    return out
+
+
+# ================================================================
+#       Convenience
+# ================================================================
+def add_calculated(ax, vals, prog, x_var='radius', label='Calculated'):
+    if vals is not None:
+        ax.plot(prog[x_var], vals, label=label)
 
 
 def add_vline(ax, vline, plot_type):
