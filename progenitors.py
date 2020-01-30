@@ -42,6 +42,11 @@ def prog_filepath(mass, path=None):
     return filepath
 
 
+def load_net(filename='iso19.txt'):
+    filepath = os.path.join('/Users/zac/projects/codes/ccsn/data', filename)
+    return pd.read_csv(filepath)
+
+    
 # ===================================================
 #           Plotting
 # ===================================================
@@ -103,11 +108,13 @@ def map_abu(prog, net_0, sums_0=None):
     abu = {}
     sums_0 = check_sums(sums_0, prog=prog, net=net_0)
 
-    abu['fe56'] = prog['Fe56']
+    # abu['fe56'] = prog['Fe56']
+    # abu['cr56'] = 7 * (1 - sums_0['sumx']) - 14 * (prog['Ye'] - sums_0['ye']) - 0.5 * abu['fe56']
+    # abu['ni56'] = 1 - sums_0['sumx'] - abu['fe56'] - abu['cr56']
 
-    abu['cr56'] = 7 * (1 - sums_0['sumx']) - 14 * (prog['Ye'] - sums_0['ye']) - 0.5 * abu['fe56']
-
-    abu['ni56'] = 1 - sums_0['sumx'] - abu['fe56'] - abu['cr56']
+    abu['ni56'] = prog['Ni56']
+    abu['fe56'] = 28 * (prog['Ye'] - sums_0['ye']) - 12 * (1 - sums_0['sumx']) - 2 * abu['ni56']
+    abu['cr56'] = (1 - sums_0['sumx']) - abu['fe56'] - abu['ni56']
 
     for key, val in abu.items():
         abu[key] = np.array(val)
