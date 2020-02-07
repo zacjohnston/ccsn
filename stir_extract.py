@@ -33,7 +33,7 @@ def get_bounce_time(masses, filenames):
 def extract_last_dats(masses, filenames, var_list=None):
     """Extract last line of .dat files
     """
-    print('Extracting last lines of /dat files')
+    print('Extracting last lines of .dat files')
 
     if var_list is None:
         var_list = {'time': 0,
@@ -44,14 +44,15 @@ def extract_last_dats(masses, filenames, var_list=None):
 
     last_dats = pd.DataFrame()
     last_dats['mass'] = masses
+    n_masses = len(masses)
 
     # create temporary arrays
     arrays = {}
     for var in var_list:
-        arrays[var] = np.full(len(masses), np.nan)
+        arrays[var] = np.full(n_masses, np.nan)
 
     for i, mass in enumerate(masses):
-        print(mass)
+        print(f'\rmass: {mass} ({100 * (i + 1) / n_masses:.1f}%)', end='')
 
         # find last line
         with open(filenames[mass], "rb") as f:
@@ -63,6 +64,8 @@ def extract_last_dats(masses, filenames, var_list=None):
         # get vars from last line
         for var, idx in var_list.items():
             arrays[var][i] = float(last.split()[idx])
+
+    print('')
 
     # add var columns to table
     for var in var_list:
