@@ -2,7 +2,7 @@ import json
 import os
 
 # local
-import stirPlots
+from stir_extract import read_last_lines
 
 # adapted from https://github.com/snaphu-msu/ecRateStudy
 
@@ -39,7 +39,7 @@ for mass in masses:
     fname = f'stir2_14may19_s{mass:.1f}_alpha1.25.dat'
     filenames[mass] = os.path.join(mpath, fname)
 
-lastDats = stirPlots.read_last_lines(masses, filenames)
+lastDats = read_last_lines(masses, filenames)
 with open('lastDats.json', 'w') as f:
     json.dump(lastDats, f)
 
