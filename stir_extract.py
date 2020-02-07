@@ -22,9 +22,11 @@ def get_bounce_time(masses, filenames):
 
 
 def read_last_lines(masses, filenames):
+    print('Extracting last lines of /dat files')
     last_dats = {}
 
     for mass in masses:
+        print(mass)
         last_dats[mass] = {}
 
         with open(filenames[mass], "rb") as f:
