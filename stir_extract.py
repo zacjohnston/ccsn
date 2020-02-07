@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import pandas as pd
 from scipy.optimize import curve_fit
 
 # adapted from https://github.com/snaphu-msu/ecRateStudy
@@ -21,25 +22,43 @@ def get_bounce_time(masses, filenames):
     return bouncetimes
 
 
-def read_last_lines(masses, filenames):
+def extract_last_dats(masses, filenames, var_list=None):
+    """Extract last line of .dat files
+    """
     print('Extracting last lines of /dat files')
-    last_dats = {}
 
-    for mass in masses:
+    if var_list is None:
+        var_list = {'time': 0,
+                    'exp_en': 9,
+                    'rsh_avg': 11,
+                    'dens_c': 16,
+                    'pns_mass': 20}
+
+    last_dats = pd.DataFrame()
+    last_dats['mass'] = masses
+
+    # create temporary arrays
+    arrays = {}
+    for var in var_list:
+        arrays[var] = np.full(len(masses), np.nan)
+
+    for i, mass in enumerate(masses):
         print(mass)
-        last_dats[mass] = {}
 
+        # find last line
         with open(filenames[mass], "rb") as f:
             f.seek(-2, os.SEEK_END)
             while f.read(1) != b"\n":
                 f.seek(-2, os.SEEK_CUR)
             last = f.readline()
 
-        last_dats[mass]['ener'] = float(last.split()[9])
-        last_dats[mass]['shok'] = float(last.split()[11])
-        last_dats[mass]['dens'] = float(last.split()[16])
-        last_dats[mass]['Mpns'] = float(last.split()[20])
-        last_dats[mass]['time'] = float(last.split()[0])
+        # get vars from last line
+        for var, idx in var_list.items():
+            arrays[var][i] = float(last.split()[idx])
+
+    # add var columns to table
+    for var in var_list:
+        last_dats[var] = arrays[var]
 
     return last_dats
 
