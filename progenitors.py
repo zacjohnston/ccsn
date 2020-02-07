@@ -44,9 +44,9 @@ def prog_filepath(mass, path=None):
 
 def load_net(filename='iso19.txt'):
     filepath = os.path.join('/Users/zac/projects/codes/ccsn/data', filename)
-    return pd.read_csv(filepath)
-
+    return pd.read_csv(filepath, delim_whitespace=True)
     
+
 # ===================================================
 #           Plotting
 # ===================================================
@@ -101,20 +101,17 @@ def plot_x(prog, net, cr56=None, vline=None):
 # ================================================================
 #       Abundance Mapping
 # ================================================================
-def map_abu(prog, net_0, sums_0=None):
+def map_abu(prog, net_0, net, sums_0=None, sums=None):
     """
     net_0 : table of isotopes *not* being mapped
     """
     abu = {}
     sums_0 = check_sums(sums_0, prog=prog, net=net_0)
-
-    # abu['fe56'] = prog['Fe56']
-    # abu['cr56'] = 7 * (1 - sums_0['sumx']) - 14 * (prog['Ye'] - sums_0['ye']) - 0.5 * abu['fe56']
-    # abu['ni56'] = 1 - sums_0['sumx'] - abu['fe56'] - abu['cr56']
+    sums = check_sums(sums, prog=prog, net=net)
 
     abu['ni56'] = prog['Ni56']
-    abu['fe56'] = 28 * (prog['Ye'] - sums_0['ye']) - 12 * (1 - sums_0['sumx']) - 2 * abu['ni56']
-    abu['cr56'] = (1 - sums_0['sumx']) - abu['fe56'] - abu['ni56']
+    abu['fe56'] = prog['Fe56']
+    abu['cr56'] = (1 - sums_0['sumx'])
 
     for key, val in abu.items():
         abu[key] = np.array(val)
@@ -141,27 +138,20 @@ def get_sums(prog, net):
     return out
 
 
-def plot_mapped(prog, net_0):
-    fig, ax = plt.subplots(3, 1, figsize=[8, 6], sharex=True)
-
-    for i in range(3):
-        pass
-
-
 def plot_mapped_sumx(prog, net_0, net, mapped_abu=None, ax=None, vline=None,
                      hline=None, x_var=None, sums_0=None, sums=None, xlims=None,
                      legend=True):
     x_var = check_xvar(x_var)
     sums_0 = check_sums(sums_0, prog=prog, net=net_0)
     sums = check_sums(sums, prog=prog, net=net)
-    mapped_abu = check_mapped_abu(mapped_abu, prog=prog, net_0=net_0, sums_0=sums_0)
+    mapped_abu = check_mapped_abu(mapped_abu, prog=prog, net_0=net_0, sums_0=sums_0, net=net)
 
     ax = check_ax(ax)
 
     for iso in ['ni56', 'fe56', 'cr56']:
         ax.plot(prog[x_var], mapped_abu[iso], label=f'{iso} (mapped)')
 
-    ax.plot(prog[x_var], sums['sumx'], ls='--', label='sumx (original)')
+    ax.plot(prog[x_var], sums['sumx'], ls='--', label='sumx (original net19)')
     ax.plot(prog[x_var], sums_0['sumx'], ls='--', label='sumx (partial)')
 
     sumx_final = sums_0['sumx'] + mapped_abu['ni56'] + mapped_abu['fe56'] + mapped_abu['cr56']
@@ -179,14 +169,14 @@ def plot_mapped_ye(prog, net_0, net, mapped_abu=None, ax=None, vline=None,
     x_var = check_xvar(x_var)
     sums_0 = check_sums(sums_0, prog=prog, net=net_0)
     sums = check_sums(sums, prog=prog, net=net)
-    mapped_abu = check_mapped_abu(mapped_abu, prog=prog, net_0=net_0, sums_0=sums_0)
+    mapped_abu = check_mapped_abu(mapped_abu, prog=prog, net_0=net_0, sums_0=sums_0, net=net)
     ax = check_ax(ax)
 
     ax.plot(prog[x_var], mapped_abu['ni56'] * 28/56, label=f'ni56 (mapped)')
     ax.plot(prog[x_var], mapped_abu['fe56'] * 26/56, label=f'fe56 (mapped)')
     ax.plot(prog[x_var], mapped_abu['cr56'] * 24/56, label=f'cr56 (mapped)')
 
-    ax.plot(prog[x_var], prog['Ye'], ls='--', label='original')
+    ax.plot(prog[x_var], prog['Ye'], ls='--', label='provided')
     ax.plot(prog[x_var], sums_0['ye'], ls='--', label='partial')
 
     ye_final = sums_0['ye'] + mapped_abu['ni56'] * 28/56 + mapped_abu['fe56'] * 26/56 \
@@ -242,9 +232,9 @@ def check_sums(sums, prog, net):
     return sums
 
 
-def check_mapped_abu(mapped_abu, prog, net_0, sums_0):
+def check_mapped_abu(mapped_abu, prog, net_0, sums_0, net):
     if mapped_abu is None:
-        mapped_abu = map_abu(prog=prog, net_0=net_0, sums_0=sums_0)
+        mapped_abu = map_abu(prog=prog, net_0=net_0, sums_0=sums_0, net=net)
     return mapped_abu
 
 
