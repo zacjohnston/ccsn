@@ -82,6 +82,19 @@ def get_extra_ener(masses, filenames):
     return extra_ener
 
 
+def quadratic(x, a, b, c):
+    return a + b * x + c * x ** 2
+
+
+def dquadzero(b, c):
+    return -b / (2 * c)
+
+
+def asymp_ener(a, b, c):
+    zero = dquadzero(b, c)
+    return quadratic(zero, a, b, c)
+
+
 # def compactMu(masses):
 #    compMu = {}
 #    for mass in masses:
@@ -108,15 +121,3 @@ def get_extra_ener(masses, filenames):
 #        # Now estimate He core mass
 #        compMu[mass]['Mhe'] = np.max(mr[np.where(ye < 0.7)])
 #    return compMu
-
-
-def quadratic(x, a, b, c):
-    return a + b * x + c * x ** 2
-
-
-def dquadzero(a, b, c):
-    return -b / 2. / c
-
-
-def asymp_ener(a, b, c):
-    return quadratic(dquadzero(a, b, c), a, b, c)
