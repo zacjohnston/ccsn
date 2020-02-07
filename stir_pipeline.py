@@ -30,6 +30,7 @@ from stir_extract import read_last_lines
 #           30.0,31,32,33,35,40,45,50,55,60,70,80,100,120]
 
 models_path = '/Users/zac/projects/data/stir/run_sukhbold/run_14may19_a1.25'
+output_path = '/Users/zac/projects/data/stir/extracted'
 masses = [12.0, 13.0, 19.0]
 
 # --- Generate filenames ---
@@ -39,9 +40,12 @@ for mass in masses:
     fname = f'stir2_14may19_s{mass:.1f}_alpha1.25.dat'
     filenames[mass] = os.path.join(mpath, fname)
 
-lastDats = read_last_lines(masses, filenames)
-with open('lastDats.json', 'w') as f:
-    json.dump(lastDats, f)
+# --- Extract last lines of .dat ---
+last_dats = read_last_lines(masses, filenames)
+
+out_filepath = os.path.join(output_path, 'stir_last_dats.json')
+with open(out_filepath, 'w') as f:
+    json.dump(last_dats, f)
 
 # explDats = get_expl_shok(['aprox','lab'], mass, filenames)
 # with open('explDatsEC.json', 'w') as f:
