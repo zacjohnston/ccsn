@@ -1,96 +1,93 @@
-import numpy as np
 import os
-#import matplotlib.pyplot as plt
-#import matplotlib.cm as cm
-#import matplotlib.colors as co
-from scipy.optimize import fsolve, curve_fit
-from scipy.integrate import quad
+import numpy as np
+from scipy.optimize import curve_fit
 
 # adapted from https://github.com/snaphu-msu/ecRateStudy
 
 
-def getBounceTime(masses, filenames):
+def get_bounce_time(masses, filenames):
     bouncetimes = {}
 
     for mass in masses:
         bouncetimes[mass] = {}
-        logname = filenames[mass][:-4]+".log"
-    
+        logname = filenames[mass][:-4] + ".log"
+
         for line in open(logname, 'r'):
             if "Bounce!" in line:
                 bouncetimes[mass]["tbounce"] = float(line.split()[1])
-    
+
         print(mass, bouncetimes[mass]["tbounce"])
-    
+
     return bouncetimes
 
 
-def readLastLines(masses, filenames):
-    lastDats = {}
-    
+def read_last_lines(masses, filenames):
+    last_dats = {}
+
     for mass in masses:
-        lastDats[mass] = {}
-    
+        last_dats[mass] = {}
+
         with open(filenames[mass], "rb") as f:
             f.seek(-2, os.SEEK_END)
             while f.read(1) != b"\n":
                 f.seek(-2, os.SEEK_CUR)
             last = f.readline()
-    
-        lastDats[mass]['ener'] = float(last.split()[9])
-        lastDats[mass]['shok'] = float(last.split()[11])
-        lastDats[mass]['dens'] = float(last.split()[16])
-        lastDats[mass]['Mpns'] = float(last.split()[20])
-        lastDats[mass]['time'] = float(last.split()[0])
-    
-    return lastDats
+
+        last_dats[mass]['ener'] = float(last.split()[9])
+        last_dats[mass]['shok'] = float(last.split()[11])
+        last_dats[mass]['dens'] = float(last.split()[16])
+        last_dats[mass]['Mpns'] = float(last.split()[20])
+        last_dats[mass]['time'] = float(last.split()[0])
+
+    return last_dats
 
 
-def getMaxData(mass, filenames, column):
-    data = np.loadtxt(filenames[mass],usecols=(column,),unpack=True)
+def get_max_data(mass, filenames, column):
+    data = np.loadtxt(filenames[mass], usecols=(column,), unpack=True)
     return data[-1]
 
 
-def getExplShok(masses, filenames):
-    explDats = {}
-    
+def get_expl_shok(masses, filenames):
+    expl_dats = {}
+
     for mass in masses:
-        explDats[mass] = {}
-        time, ener, shok = np.loadtxt(filenames[mass], usecols=(0,9,11), unpack=True)
+        expl_dats[mass] = {}
+        time, ener, shok = np.loadtxt(filenames[mass], usecols=(0, 9, 11), unpack=True)
         index = np.max(np.where(ener < 1.e49))
-    
-        explDats[mass]['rmax'] = np.max(shok)
-        explDats[mass]['texp'] = time[index]
-        explDats[mass]['Eexp'] = np.max(ener)
-    
-    return explDats
+
+        expl_dats[mass]['rmax'] = np.max(shok)
+        expl_dats[mass]['texp'] = time[index]
+        expl_dats[mass]['Eexp'] = np.max(ener)
+
+    return expl_dats
 
 
-def getExtraEner(masses, filenames):
-    extraEner = {}
+def get_extra_ener(masses, filenames):
+    extra_ener = {}
     for mass in masses:
-        extraEner[mass] = {}
+        extra_ener[mass] = {}
 
-        time, ener = np.loadtxt(filenames[mass], usecols=(0,9), unpack=True)
+        time, ener = np.loadtxt(filenames[mass], usecols=(0, 9), unpack=True)
         ener /= 1e51
-        maxEner = ener[-1]
-        
-        extraEner[mass]['finalEner'] = maxEner
-        extraEner[mass]['finalTime'] = time[-1]
-        
-        params = curve_fit(quadratic, time, ener)[0]
-        
-        extraEner[mass]['asympTime'] = dquadzero(*params)
-        extraEner[mass]['asympEner'] = asympEner(*params)
+        max_ener = ener[-1]
 
-    return extraEner
+        extra_ener[mass]['finalEner'] = max_ener
+        extra_ener[mass]['finalTime'] = time[-1]
+
+        params = curve_fit(quadratic, time, ener)[0]
+
+        extra_ener[mass]['asympTime'] = dquadzero(*params)
+        extra_ener[mass]['asympEner'] = asymp_ener(*params)
+
+    return extra_ener
 
 
 # def compactMu(masses):
 #    compMu = {}
 #    for mass in masses:
 #        compMu[mass] = {}
-#        rad, mr, entr, ye = np.loadtxt('/mnt/research/SNAPhU/Progenitors2/s'+str(mass)+'_presn.FLASH', usecols=(0,1,6,9), unpack=True, skiprows=11)
+#        rad, mr, entr, ye = np.loadtxt('/mnt/research/SNAPhU/Progenitors2/s'
+#               +str(mass)+'_presn.FLASH', usecols=(0,1,6,9), unpack=True, skiprows=11)
 #        mr /= 2.e33 # put in solar masses
 #        # First compute compactnesses
 #        index = np.max(np.where(mr < 1.75))
@@ -114,12 +111,12 @@ def getExtraEner(masses, filenames):
 
 
 def quadratic(x, a, b, c):
-    return a + b*x + c*x**2
+    return a + b * x + c * x ** 2
 
 
-def dquadzero(a,b,c):
-    return -b/2./c
+def dquadzero(a, b, c):
+    return -b / 2. / c
 
 
-def asympEner(a,b,c):
-    return quadratic(dquadzero(a,b,c), a, b,c)
+def asymp_ener(a, b, c):
+    return quadratic(dquadzero(a, b, c), a, b, c)

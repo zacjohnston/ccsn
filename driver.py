@@ -39,11 +39,11 @@ for mass in masses:
     fname = f'stir2_14may19_s{mass:.1f}_alpha1.25.dat'
     filenames[mass] = os.path.join(mpath, fname)
 
-lastDats = stirPlots.readLastLines(masses, filenames)
+lastDats = stirPlots.read_last_lines(masses, filenames)
 with open('lastDats.json', 'w') as f:
     json.dump(lastDats, f)
 
-# explDats = getExplShok(['aprox','lab'], mass, filenames)
+# explDats = get_expl_shok(['aprox','lab'], mass, filenames)
 # with open('explDatsEC.json', 'w') as f:
 # 	json.dump(explDats, f)
 
@@ -55,12 +55,12 @@ with open('lastDats.json', 'w') as f:
 # with open('bounceTimesAprox.json', 'w') as f:
 #     json.dump(bounceTimes, f)
 
-#extraEner = getExtraEner(alpha, mass, filenames)
-#with open('extraEner.json', 'w') as f:
+# extraEner = getExtraEner(alpha, mass, filenames)
+# with open('extraEner.json', 'w') as f:
 #    json.dump(extraEner, f)
 
-#compMu = compactMu(mass)
-#with open('compMu2.json', 'w') as f:
+# compMu = compactMu(mass)
+# with open('compMu2.json', 'w') as f:
 #    json.dump(compMu, f)
 
-#pltLandscapeEner(alpha, mass, filenames)
+# pltLandscapeEner(alpha, mass, filenames)
