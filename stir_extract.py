@@ -6,6 +6,11 @@ from scipy.optimize import curve_fit
 # adapted from https://github.com/snaphu-msu/ecRateStudy
 
 
+def load_last_dats(output_path):
+    out_filepath = os.path.join(output_path, 'stir_last_dats.csv')
+    return pd.read_csv(out_filepath)
+
+
 def get_dat_filepaths(masses, models_path):
     filenames = {}
     for mass in masses:
