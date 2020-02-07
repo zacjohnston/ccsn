@@ -38,8 +38,8 @@ output_path = '~/projects/data/stir/extracted'
 # --- Generate filenames ---
 filenames = {}
 for mass in masses:
-    mpath = os.path.join(models_path, f'run_{mass:.1f}')
-    fname = f'stir2_14may19_s{mass:.1f}_alpha1.25.dat'
+    mpath = os.path.join(models_path, f'run_{mass}')
+    fname = f'stir2_14may19_s{mass}_alpha1.25.dat'
     filenames[mass] = os.path.join(mpath, fname)
 
 # --- Extract last lines of .dat ---
