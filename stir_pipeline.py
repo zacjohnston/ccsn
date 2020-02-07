@@ -1,8 +1,7 @@
 import os
-import pandas as pd
 
 # local
-from stir_extract import extract_last_dats
+from stir_extract import extract_last_dats, get_dat_filepaths
 
 # adapted from https://github.com/snaphu-msu/ecRateStudy
 
@@ -36,15 +35,9 @@ output_path = '/mnt/home/john7457/projects/data/stir/extracted'
 # models_path = '/Users/zac/projects/data/stir/run_sukhbold/run_14may19_a1.25'
 # output_path = '/Users/zac/projects/data/stir/extracted'
 
-# --- Generate filenames ---
-filenames = {}
-for mass in masses:
-    mpath = os.path.join(models_path, f'run_{mass}')
-    fname = f'stir2_14may19_s{mass}_alpha1.25.dat'
-    filenames[mass] = os.path.join(mpath, fname)
-
 # --- Extract last lines of .dat ---
-last_dats = extract_last_dats(masses, filenames)
+filepaths = get_dat_filepaths(masses, models_path=models_path)
+last_dats = extract_last_dats(masses, filepaths)
 
 out_filepath = os.path.join(output_path, 'stir_last_dats.csv')
 last_dats.to_csv(out_filepath, index=False)

@@ -6,6 +6,14 @@ from scipy.optimize import curve_fit
 # adapted from https://github.com/snaphu-msu/ecRateStudy
 
 
+def get_dat_filepaths(masses, models_path):
+    filenames = {}
+    for mass in masses:
+        mpath = os.path.join(models_path, f'run_{mass}')
+        fname = f'stir2_14may19_s{mass}_alpha1.25.dat'
+        filenames[mass] = os.path.join(mpath, fname)
+
+
 def get_bounce_time(masses, filenames):
     bouncetimes = {}
 
