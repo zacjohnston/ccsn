@@ -28,12 +28,12 @@ masses = [9.0, 9.25, 9.5, 9.75,
           29.0, 29.1, 29.2, 29.3, 29.4, 29.5, 29.6, 29.7, 29.8, 29.9,
           30.0, 31, 32, 33, 35, 40, 45, 50, 55, 60, 70, 80, 100, 120]
 
-models_path = '/mnt/home/john7457/projects/data/stir/run_sukhbold/run_14may19_a1.25'
-output_path = '/mnt/home/john7457/projects/data/stir/extracted'
+# models_path = '/mnt/home/john7457/projects/data/stir/run_sukhbold/run_14may19_a1.25'
+# output_path = '/mnt/home/john7457/projects/data/stir/extracted'
 
 # masses = [12.0, 13.0, 19.0]
-# models_path = '/Users/zac/projects/data/stir/run_sukhbold/run_14may19_a1.25'
-# output_path = '/Users/zac/projects/data/stir/extracted'
+models_path = '/Users/zac/projects/data/stir/run_sukhbold/run_14may19_a1.25'
+output_path = '/Users/zac/projects/data/stir/extracted'
 
 # --- Extract last lines of .dat ---
 filepaths = get_dat_filepaths(masses, models_path=models_path)
