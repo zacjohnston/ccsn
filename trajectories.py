@@ -11,19 +11,19 @@ g2msun = units.g.to(units.Msun)
 
 
 def load_all_stir_tracers(n_tracers, run='stir2_oct8_s12.0_alpha1.25',
-                          prefix='_tracer', extension='.dat',
+                          prefix='_tracer', extension='.dat', skiprows=2,
                           path='/Users/zac/projects/codes/traj_code/data/traj_s12.0_1024'):
     """Load all stir tracers and return as single array
     """
     t0 = load_stir_traj(0, run=run, prefix=prefix, extension=extension,
-                        path=path)
+                        path=path, skiprows=skiprows)
     n_time, n_var = t0.shape
     tracers = np.full([n_tracers, n_time, n_var], np.nan)
 
     for i in range(n_tracers):
         sys.stdout.write(f'\rloading stir tracer: {i+1}/{n_tracers}')
         tracer = load_stir_traj(i, run=run, prefix=prefix, extension=extension,
-                                path=path)
+                                path=path, skiprows=skiprows)
         tracers[i, :, :] = tracer
 
     sys.stdout.write('\n')
