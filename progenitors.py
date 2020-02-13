@@ -50,8 +50,8 @@ def load_net(filename='iso19.txt'):
 # ===================================================
 #           Plotting
 # ===================================================
-def plot_ye(prog, ye=None, vline=None):
-    fig, ax = plt.subplots(figsize=[8, 6])
+def plot_ye(prog, ye=None, vline=None, ax=None):
+    ax = check_ax(ax)
 
     ax.plot(prog['radius'], prog['Ye'], label='Provided')
     add_calculated(ax=ax, vals=ye, prog=prog)
@@ -62,11 +62,9 @@ def plot_ye(prog, ye=None, vline=None):
     ax.set_xlabel('radius (cm)')
     ax.legend()
 
-    return fig, ax
 
-
-def plot_abar(prog, abar=None, vline=None):
-    fig, ax = plt.subplots(figsize=[8, 6])
+def plot_abar(prog, abar=None, vline=None, ax=None):
+    ax = check_ax(ax)
 
     ax.plot(prog['radius'], prog['Abar'], label='Provided')
     add_calculated(ax=ax, vals=abar, prog=prog)
@@ -77,11 +75,9 @@ def plot_abar(prog, abar=None, vline=None):
     ax.set_xlabel('radius (cm)')
     ax.legend()
 
-    return fig, ax
 
-
-def plot_x(prog, net, cr56=None, vline=None):
-    fig, ax = plt.subplots(figsize=[8, 6])
+def plot_x(prog, net, cr56=None, vline=None, ax=None):
+    ax = check_ax(ax)
 
     for row in net.itertuples():
         iso = row.isotope.capitalize()
@@ -95,8 +91,21 @@ def plot_x(prog, net, cr56=None, vline=None):
     ax.set_xlabel('radius (km)')
     ax.legend()
 
-    return fig, ax
+    # return fig, ax
 
+
+def plot_summary(prog, net, ye=None, abar=None, vline=None):
+    fig, ax = plt.subplots(3, figsize=[9, 12], sharex=True)
+
+    ax[0].set_xlim([7e7, 2.9e8])
+    ax[0].set_ylabel('X')
+    ax[-1].set_xlabel('radius (cm)')
+
+    plot_x(prog, net=net, ax=ax[0], vline=vline)
+    plot_ye(prog, ye=ye, ax=ax[1], vline=vline)
+    plot_abar(prog, ax=ax[2], abar=abar, vline=vline)
+
+    plt.tight_layout()
 
 # ================================================================
 #       Abundance Mapping
